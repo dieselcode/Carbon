@@ -1,0 +1,24 @@
+{
+    "name": "dieselcode/Carbon",
+    "type": "library",
+    "description": "PHP WebSocket Server",
+    "keywords": ["websocket","server"],
+    "homepage": "http://github.com/dieselcode/Carbon",
+    "license": "LGPL",
+    "authors": [
+        {
+            "name": "Andrew Heebner",
+            "email": "andrew.heebner@gmail.com",
+            "homepage": "http://github.com/dieselcode",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.6"
+    },
+    "autoload": {
+        "psr-0": {
+            "Carbon": "src"
+        }
+    }
+}
