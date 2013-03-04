@@ -26,10 +26,7 @@ abstract class Frame
 
     protected $payload = '';
     protected $type    = null;
-    protected $length  = 0;
 
-    // frame-specifics
-    protected $final   = 1;
 
     public function getType()
     {
