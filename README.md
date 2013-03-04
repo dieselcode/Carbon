@@ -1,4 +1,4 @@
-Carbon
+![Carbon](http://php-oop.net/~andrew/carbon-head.png)
 ======
 
 [![Build Status](https://drone.io/github.com/dieselcode/Carbon/status.png)](https://drone.io/github.com/dieselcode/Carbon/latest)
