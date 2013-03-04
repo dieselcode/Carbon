@@ -19,7 +19,7 @@
  * License along with this library.
  */
 
-require_once '../Loader.php';
+require_once '../vendor/autoload.php';
 
 use \Carbon\Core\Helpers\DataTrigger;
 
