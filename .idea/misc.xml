@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExportToHTMLSettings">
+    <option name="printScope" value="1" />
+    <option name="PRINT_LINE_NUMBERS" value="true" />
+    <option name="OPEN_IN_BROWSER" value="true" />
+    <option name="OUTPUT_DIRECTORY" value="C:\Users\Andrew\Desktop\Diesel\exportToHTML" />
+  </component>
+  <component name="ProjectResources">
+    <default-html-doctype>jar:file:\C:\Program Files (x86)\JetBrains\PhpStorm 5.0.4\lib\webide.jar!\resources\html5-schema\html5.rnc</default-html-doctype>
+  </component>
+  <component name="ProjectRootManager" version="2" />
+</project>
+
