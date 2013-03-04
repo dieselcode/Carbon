@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script>
+
+        var files = [];
+
+        $(function () {
+            var ws = new WebSocket('ws://127.0.0.1:12345/upload');
+            //ws.binaryType = 'arraybuffer';
+
+            ws.onmessage = function (evt) {
+                console.log(evt);
+
+                var message = JSON.parse(evt.data);
+
+                if (message.status == 'success') {
+                    alert('File was uploaded!');
+                } else if(message.status == 'error') {
+                    alert('Error!  ' + message.message);
+                }
+            };
+
+            $("#upload-file").change(function (event) {
+                $.each(event.target.files, function (index, file) {
+                    var reader = new FileReader();
+                    reader.onload = function (event) {
+                        // btoa() is very important, unless we wind up with a corrupted JSON string
+                        var buffer = btoa(event.target.result);
+                        var sendbuf = JSON.stringify({
+                            filename:file.name,
+                            filedata:buffer,
+                            filetime:Math.round(+new Date() / 1000)
+                        });
+
+                        files.push(sendbuf);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            });
+
+            $("#upload-form").submit(function (form) {
+                $.each(files, function (index, file) {
+                    ws.send(file);
+                });
+
+                files = [];
+                form.preventDefault();
+            });
+
+        });
+
+    </script>
+</head>
+
+<body>
+<form action="/upload" id="upload-form">
+    <input type="file" name="upload-file" id="upload-file" />
+    <input type="submit" value="Upload"/>
+</form>
+
+<ul id="file-listing"></ul>
+
+</body>
+</html>
