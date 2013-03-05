@@ -24,6 +24,7 @@ namespace Carbon\Core;
 use \Carbon\Core\Connection,
     \Carbon\Core\Socket,
     \Carbon\Core\Protocol,
+    \Carbon\Core\Settings,
     \Carbon\Core\Helpers\DataTrigger,
     \Carbon\Exception\ServerException,
     \Carbon\Exception\SocketException;
@@ -49,46 +50,33 @@ class Server extends Socket
     private $current_route      = null;
     private $current_action     = null;
 
-
-    /*
-     * TODO: prepopulate config variable with values.  This will help with an Express Server integration
-     */
-
-    public $config          = array(
-        'server' => array(
-            'scheme' => 'tcp',
-            'host' => '0.0.0.0',
-            'port' => 12345,
-            'max_buffer' => 2048
-        ),
-        'options' => array(
-            'default_timezone' => 'America/New_York'
-        ),
-        'ssl' => array(),
-        'origin_whitelist' => array()
-    );
-
-
-    public function __construct($config_file = null)
+    public function __construct($config_file = null, \Closure $callback = null)
     {
-        date_default_timezone_set($this->config['options']['default_timezone']);
         ob_implicit_flush(true);
         set_time_limit(0);
 
         if (!is_null($config_file)) {
-            if (false === $this->loadConfig($config_file)) {
+            if (false === Settings::load($config_file)) {
                 throw new ServerException('Unable to locate and load configuration file "' . $config_file . '"');
             }
         }
 
+        // set up a default timezone
+        date_default_timezone_set(Settings::get('options')['default_timezone']);
+
         try {
             parent::__construct(
-                $this->config['server']['host'],
-                $this->config['server']['port'],
-                $this->config['server']['scheme']
+                Settings::get('server')['host'],
+                Settings::get('server')['port'],
+                Settings::get('server')['scheme']
             );
 
             $this->log('Created socket server...');
+
+            if (!is_null($callback) && $callback instanceof \Closure) {
+                $this->log('Executing server start callback...');
+                $callback();
+            }
         } catch (SocketException $e) {
             throw new ServerException($e->getMessage());
         }
@@ -118,8 +106,8 @@ class Server extends Socket
                 $changed,
                 $write,
                 $except,
-                $this->config['options']['socket_select_timeout_sec'],
-                $this->config['options']['socket_select_timeout_usec']) === false
+                Settings::get('options')['socket_select_timeout_sec'],
+                Settings::get('options')['socket_select_timeout_usec']) === false
             ) {
                 $this->log('Stream select failed...');
                 break;
@@ -140,7 +128,7 @@ class Server extends Socket
                         $this->allsockets[] = $socket;
                     }
                 } else {
-                    $buffer = stream_socket_recvfrom($resource, $this->config['server']['max_buffer']);
+                    $buffer = stream_socket_recvfrom($resource, Settings::get('server')['max_buffer']);
                     @$connection = $this->connections[$resource];
                     $protocol = new Protocol($connection);
 
@@ -159,14 +147,14 @@ class Server extends Socket
                                 do {
                                     $bytes = stream_socket_recvfrom(
                                         $resource,
-                                        $this->config['server']['max_buffer'],
+                                        Settings::get('server')['max_buffer'],
                                         STREAM_PEEK
                                     );
 
                                     if ($bytes > 0) {
                                         $buffer = @stream_socket_recvfrom(
                                             $resource,
-                                            $this->config['server']['max_buffer']
+                                            Settings::get('server')['max_buffer']
                                         );
 
                                         if ($message = $protocol->deframe($buffer, $connection)) {
@@ -211,26 +199,10 @@ class Server extends Socket
         }
     }
 
-    public function loadConfig($config_file)
-    {
-        if (file_exists($config_file)) {
-            if (false !== ($ini = parse_ini_file($config_file, true))) {
-                foreach ($ini as $k => $v) { // section
-                    $this->config[$k] = $v;
-                }
-
-                return true;
-            }
-
-        }
-
-        return false;
-    }
-
     public function getServerString() {
-        return $this->config['server']['scheme'] . "://" .
-               $this->config['server']['host'] . ":" .
-               $this->config['server']['port'];
+        return Settings::get('server')['scheme'] . "://" .
+               Settings::get('server')['host'] . ":" .
+               Settings::get('server')['port'];
     }
 
 

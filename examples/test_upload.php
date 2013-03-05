@@ -4,14 +4,13 @@ require_once '../vendor/autoload.php';
 
 try {
 
-    /**
-     * See the server > max_buffer setting in diesel.upload.ini
-     *
-     * A larger buffer is needed to upload files.  This uploader
-     * does work now.
-     */
+    $server = new \Carbon\Core\Server('settings.generic.php', function() {
+        /**
+         * Override the max_buffer setting and raise it to 3MB for uploading
+         */
+        \Carbon\Core\Settings::set('server', 'max_buffer', 3145728);
+    });
 
-    $server = new \Carbon\Core\Server('carbon.upload.ini');
     $server->setDebug(true);
 
 

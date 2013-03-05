@@ -25,7 +25,7 @@ use \Carbon\Core\Helpers\DataTrigger;
 
 try {
     // init the server with our own ini file
-    $server = new \Carbon\Core\Server('carbon.generic.ini');
+    $server = new \Carbon\Core\Server('settings.generic.php');
     $server->setDebug(true);
 
 
