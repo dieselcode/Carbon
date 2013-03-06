@@ -128,7 +128,9 @@ class Server extends Socket
                         $this->allsockets[] = $socket;
                     }
                 } else {
-                    $buffer = stream_socket_recvfrom($resource, Settings::get('server')['max_buffer']);
+                    //$buffer = stream_socket_recvfrom($resource, Settings::get('server')['max_buffer']);
+                    $buffer = $this->readWholeBuffer($resource, Settings::get('server')['max_buffer']);
+
                     @$connection = $this->connections[$resource];
                     $protocol = new Protocol($connection);
 

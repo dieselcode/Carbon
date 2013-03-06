@@ -21,7 +21,8 @@
 
 namespace Carbon\Core;
 
-use \Carbon\Exception\SocketException as SocketException;
+use \Carbon\Exception\SocketException,
+    \Carbon\Core\SSL;
 
 class Socket
 {
@@ -38,21 +39,15 @@ class Socket
 
     protected function createServerSocket($host, $port, $scheme = 'tcp', $pem_file = null, $pem_pass = null)
     {
-        $context = $errno = $errstr = null;
+        $errno = $errstr = null;
+        $context = stream_context_create();
 
-        if ($scheme == 'ssl') {
-            $context = stream_context_create();
+        // use TLS for the server scheme if we want to be secured.
+        $scheme = (in_array($scheme, array('tls', 'ssl'))) ? 'tls' : 'tcp';
 
-            if (file_exists($pem_file)) {
-                stream_context_set_option($context, 'ssl', 'local_cert', $pem_file);
-                stream_context_set_option($context, 'ssl', 'allow_self_signed', true);
-                stream_context_set_option($context, 'ssl', 'verify_peer', false);
-                if (!is_null($pem_pass)) {
-                    stream_context_set_option($context, 'ssl', 'passphrase', $pem_pass);
-                }
-            } else {
-                throw new SocketException('Unable to locate local (pem) certificate for SSL server');
-            }
+        if ($scheme == 'tls') {
+        //if (in_array($scheme, array('ssl', 'sslv2', 'sslv3', 'tls'))) {
+            $context = SSL::getContext();
         }
 
         $address = "{$scheme}://{$host}:{$port}";
@@ -61,8 +56,9 @@ class Socket
             $address,
             $errno,
             $errstr,
-            STREAM_SERVER_BIND | STREAM_SERVER_LISTEN
-        ); // TODO: Add context here when SSL is working
+            STREAM_SERVER_BIND | STREAM_SERVER_LISTEN,
+            $context
+        );
 
         if (!is_resource($this->master)) {
             throw new SocketException('stream_socket_server() failed, reason: ' . $errstr);
@@ -83,51 +79,34 @@ class Socket
         return $written;
     }
 
-    public function readWholeBuffer($resource, $length = 2048)
+    public static function readWholeBuffer($resource, $length = 8192)
     {
-        $remaining = $length;
-
-        $buffer = '';
-        $metadata['unread_bytes'] = 0;
+        $buffer   = '';
+        $buffsize = $length;
 
         do {
             if (feof($resource)) {
-                return $buffer;
+                return false;
             }
 
-            $result = fread($resource, $length);
+            $result = fread($resource, $buffsize);
 
-            if ($result === false) {
-                return $buffer;
+            if ($result == false || feof($resource)) {
+                return false;
             }
 
-            $buffer .= $result;
-
-            if (feof($resource)) {
-                return $buffer;
+            if (SSL::enabled() && strlen($result) == 1) {
+                $result .= fread($resource, $buffsize);
             }
 
-            $continue = false;
-
-            if ($this->first_read == true && strlen($result) == 1) {
-                // Workaround Chrome behavior (still needed?)
-                $continue = true;
-            }
-            $this->first_read = false;
-
-            if (strlen($result) == $length) {
-                $continue = true;
-            }
-
-            // Continue if more data to be read
+            $buffer  .= $result;
             $metadata = stream_get_meta_data($resource);
-            if ($metadata && isset($metadata['unread_bytes']) && $metadata['unread_bytes']) {
-                $continue = true;
-                $length = $metadata['unread_bytes'];
-            }
-        } while ($continue);
+            $unread   = $metadata['unread_bytes'];
+            $buffsize = ($unread > $buffsize) ? $buffsize : $metadata['unread_bytes'];
+        } while ($unread > 0);
 
         return $buffer;
+
     }
 
 }

@@ -108,6 +108,8 @@ class Connection extends AbstractConnection
      */
     public function onData($data)
     {
+        var_dump($data->getPayload());
+
         // route to the server-specified 'data' action
         $raw_data = $data->getPayload();
         $dec_data = (self::isJSON($raw_data)) ? json_decode($raw_data) : null;

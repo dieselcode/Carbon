@@ -35,7 +35,6 @@ trait ConnectionStaticTrait
 
     public static function parseHeaders($response)
     {
-
         $parts = explode("\r\n\r\n", $response, 2);
 
         if (count($parts) != 2) {
@@ -62,7 +61,9 @@ trait ConnectionStaticTrait
         }
 
         if (preg_match("/GET (.*) HTTP/", $response, $match)) {
-            $return['GET'] = $match[1];
+            // remove the query string
+            $get = preg_replace('/\?.*/', '', $match[1]);
+            $return['GET'] = $get;
         }
 
         return $return;
