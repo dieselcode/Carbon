@@ -40,7 +40,10 @@ return array(
 
     'ssl' => array(
         'local_cert_path'       => 'carbon.ssl.pem',
+        //'local_cert_path'       => 'cf.pem',
         'local_cert_passphrase' => 'carbon',
+        //'local_cert_passphrase' => '',
+
         'cert_settings'         => array(
             'countryName' => 'US',
             'stateOrProvinceName' => 'Pennsylvania',
