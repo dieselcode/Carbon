@@ -42,6 +42,11 @@
             });
 
             $("#upload-form").submit(function (form) {
+                // bulk upload (make sure to split on ',' before json_decode)
+                //var file_list = files.join(',');
+                //ws.send(file_list);
+
+                // one-at-a-time...
                 $.each(files, function (index, file) {
                     ws.send(file);
                 });

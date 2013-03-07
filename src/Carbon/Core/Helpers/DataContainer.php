@@ -63,6 +63,16 @@ class DataContainer
         return null;
     }
 
+    public function getDecoded()
+    {
+        return $this->getData('decoded');
+    }
+
+    public function getRaw()
+    {
+        return $this->getData('raw');
+    }
+
 }
 
 ?>

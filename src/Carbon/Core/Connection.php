@@ -133,7 +133,9 @@ class Connection extends AbstractConnection
             $this->route['disconnect']($this);
         }
 
-        // send closing frame to socket
+        /**
+         * TODO: Allow valid close reasons here...
+         */
         $this->send('1000', Protocol::CloseFrame);
         $this->server->socketDisconnect($this);
 
