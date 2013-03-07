@@ -138,7 +138,9 @@ class Server extends Socket
                         $connection->onDisconnect();
                     } else {
                         if (!$connection->handshaked) {
-                            $protocol->handshake($connection, $buffer);
+                            if (!$protocol->handshake($connection, $buffer)) {
+                                $connection->onDisconnect();
+                            }
                         } else {
                             if ($message = $protocol->deframe($buffer, $connection)) {
                                 $connection->delegate($protocol, $message);

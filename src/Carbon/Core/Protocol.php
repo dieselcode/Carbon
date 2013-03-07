@@ -181,7 +181,6 @@ class Protocol extends Frame
 
     public function deframe($message, $connection)
     {
-        //echo $this->strtohex($message);
         $headers   = $this->extractHeaders($message);
         $pongReply = false;
         $willClose = false;
@@ -329,7 +328,6 @@ class Protocol extends Frame
     {
         $protocol = null;
         $headers  = array();
-        $connection->log('Performing handshake');
 
         // do something a bit nicer here
         $lines = preg_split("/\r\n/", $data);
@@ -343,6 +341,27 @@ class Protocol extends Frame
 
         $headers = $connection->parseHeaders($data);
         $path    = $headers['GET'];
+
+        // TODO: Do origin checks here
+        if (Settings::get('origins')['origin_check_enabled']) {
+            $allowed_origins = Settings::get('origins')['allowed_origins'];
+
+            if (!empty($allowed_origins)) {
+                $origin = Connection::getOrigin($headers);
+                $host = parse_url($origin, PHP_URL_HOST) ?: $origin;
+
+                if (in_array($host, $allowed_origins)) {
+                    $connection->log('Origin accepted and valid (' . $origin . ')...');
+                } else {
+                    $connection->log('Origin was denied (' . $origin . ')...');
+                    return false;
+                }
+
+            }
+
+        }
+
+        $connection->log('Performing handshake');
 
         // get the appropriate application
         $connection->path = ltrim($path, '/');

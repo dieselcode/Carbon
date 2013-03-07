@@ -63,21 +63,19 @@ return array(
         'debug_verbosity' => 4
     ),
 
-    /**
-     * TODO: The following sections still need to be written
-     */
-
     //
-    // if enabled=true and allow_origins is empty, it will be turned off
-    // TODO: do we allow subdomains with TLD's, or do we parse them seperately?
-    //   test.php-oop.net is different from php-oop.net, or do we parse just
-    //   php-oop.net and allow it as a whole?
-    //
-    'origin_check' => array(
+    'origins' => array(
         'origin_check_enabled' => false,
         'allowed_origins' => array(
-            'is^null',             // is->    : makes a direct comparison
-            'has^php-oop.net',     // has->   : makes general comparison (if the origin contains this text)
+            'null',
+            'localhost',
+            '127.0.0.1',
+            'www.php-oop.net',
+            'php-oop.net',
+            'www.coinfront.com',
+            'coinfront.com',
+            'www.websocket.org',
+            'websocket.org',
         )
     ),
 
