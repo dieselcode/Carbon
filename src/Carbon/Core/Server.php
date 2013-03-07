@@ -25,7 +25,6 @@ use \Carbon\Core\Connection,
     \Carbon\Core\Socket,
     \Carbon\Core\Protocol,
     \Carbon\Core\Settings,
-    \Carbon\Core\Helpers\DataTrigger,
     \Carbon\Exception\ServerException,
     \Carbon\Exception\SocketException;
 
@@ -40,7 +39,6 @@ class Server extends Socket
     use \Carbon\Core\Traits\ServerRoutingTrait;
     use \Carbon\Core\Traits\ServerDebugTrait;
     use \Carbon\Core\Traits\ServerMessagingTrait;
-    use \Carbon\Core\Traits\ServerTriggerTrait;
 
 
     private $connections        = array();

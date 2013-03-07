@@ -23,7 +23,6 @@ namespace Carbon\Core;
 
 use \Carbon\Exception\ProtocolException,
     \Carbon\Core\AbstractConnection,
-    \Carbon\Exception\TriggerException,
     \Carbon\Core\Protocol,
     \Carbon\Core\Helpers\DataContainer;
 
@@ -119,38 +118,7 @@ class Connection extends AbstractConnection
         $container->setData('raw', $raw_data);
         $container->setData('decoded', $dec_data);
 
-        $has_trigger = false;
-
-        // check to see if we have triggers setup first, then the general callback
-        if (!is_null($dec_data) && $this->server->hasTriggers()) {
-
-            $_dec_data = (array)$dec_data;
-
-            // Loop through and find our first matching key instance
-            foreach ($_dec_data as $k => $v) {
-                // check to see if we have a match
-                if ($this->server->hasDataTrigger($k)) {
-                    // activate the trigger callback only if the value is met
-                    if (false !== $this->server->assertTriggerValue($k, $v)) {
-                        $has_trigger = true;
-
-                        // make sure the callback fires properly
-                        try {
-                            $this->server->getDataTrigger($k)['callback']->call($container, $this);
-                        } catch (TriggerException $e) {
-                            $has_trigger = false;
-                            $this->server->log('Data trigger for key "' . $k . '" failed: ' . $e->getMessage());
-                        }
-                    }
-                }
-                if ($has_trigger) {
-                    return;
-                }
-            }
-        }
-
-
-        if (!$has_trigger && $this->route && $this->server->hasCallback($this->path, 'data')) {
+        if ($this->route && $this->server->hasCallback($this->path, 'data')) {
             $this->route['data']($container, $this);
         }
 
