@@ -12,7 +12,7 @@ Prerequisites
  - PHP 5.4+
  - Working knowledge of closures (anonymous functions)
  - Socket extension
- - OpenSSL support (optional) (currently not working due to PHP bug)
+ - OpenSSL support (and valid server certificate)
  - Composer
 
 Installation
@@ -54,7 +54,6 @@ All releases will be branched from `master` into their appropriate version numbe
 Todo
 -----
  - Implement connection and message throttling
- - Get OpenSSL support functioning properly
  - Create an error and logging container
  - Write more unit tests
 
