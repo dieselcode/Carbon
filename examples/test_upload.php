@@ -17,10 +17,10 @@ try {
     // default route can be set as "/" (that will take a zero index path)
     $server->route('/upload', function ($route) use ($server) {
 
-        $route->on('data', function ($raw_data, $decoded_data, $connection) use ($route, $server) {
+        $route->on('data', function ($data, $connection) use ($route, $server) {
 
-            if (!empty($decoded_data)) {
-                $file = parseFileData($decoded_data->filedata);
+            if (!empty($data->decoded)) {
+                $file = parseFileData($data->decoded->filedata);
 
                 // set our allowed mime types
                 $allowed_types = array('image/png', 'image/gif', 'image/jpeg');
@@ -32,13 +32,13 @@ try {
                         // write the uploaded file
 
                         $write = file_put_contents(
-                            $connection->getId() . $decoded_data->filename,
+                            $connection->getId() . '_' . $data->decoded->filename,
                             $file['filebuffer']
                         );
 
                         // send the user a confirmation if the file was written
                         if ($write !== false) {
-                            $message = array('status' => 'success', 'filename' => $decoded_data->filename);
+                            $message = array('status' => 'success', 'filename' => $data->decoded->filename);
                         } else {
                             $message = array('status' => 'error', 'message' => 'File could not be written on server');
                         }
@@ -54,10 +54,6 @@ try {
                 $connection->send(json_encode($message));
             }
 
-        });
-
-        $route->on('data.binary', function ($raw_data, $connection) use ($route, $server) {
-            var_dump($raw_data);
         });
 
     });

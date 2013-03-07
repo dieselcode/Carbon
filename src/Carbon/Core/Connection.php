@@ -24,7 +24,8 @@ namespace Carbon\Core;
 use \Carbon\Exception\ProtocolException,
     \Carbon\Core\AbstractConnection,
     \Carbon\Exception\TriggerException,
-    \Carbon\Core\Protocol;
+    \Carbon\Core\Protocol,
+    \Carbon\Core\Helpers\DataContainer;
 
 
 class Connection extends AbstractConnection
@@ -108,9 +109,15 @@ class Connection extends AbstractConnection
      */
     public function onData($data)
     {
+        $container = new DataContainer;
+
         // route to the server-specified 'data' action
         $raw_data = $data->getPayload();
         $dec_data = (self::isJSON($raw_data)) ? json_decode($raw_data) : null;
+
+        // contain our data
+        $container->setData('raw', $raw_data);
+        $container->setData('decoded', $dec_data);
 
         $has_trigger = false;
 
@@ -129,7 +136,7 @@ class Connection extends AbstractConnection
 
                         // make sure the callback fires properly
                         try {
-                            $this->server->getDataTrigger($k)['callback']->call($raw_data, $dec_data, $this);
+                            $this->server->getDataTrigger($k)['callback']->call($container, $this);
                         } catch (TriggerException $e) {
                             $has_trigger = false;
                             $this->server->log('Data trigger for key "' . $k . '" failed: ' . $e->getMessage());
@@ -144,7 +151,7 @@ class Connection extends AbstractConnection
 
 
         if (!$has_trigger && $this->route && $this->server->hasCallback($this->path, 'data')) {
-            $this->route['data']($raw_data, $dec_data, $this);
+            $this->route['data']($container, $this);
         }
 
         $this->updateActivity();
