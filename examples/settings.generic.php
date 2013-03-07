@@ -4,9 +4,10 @@ return array(
 
     'server' => array(
         /**
-         * 'tcp', 'ssl', or 'tls'.  Using ssl or tls will activate the 'ssl' section below
+         * 'tcp', 'ssl', 'sslv2', 'sslv3', or 'tls'.  Using ssl or tls will activate the 'ssl' section below
+         * 'tls' is recommended for secure connections
          */
-        'scheme'        => 'tcp',
+        'scheme'        => 'tls',
 
         /**
          * Recommended; host IP to bind server to
@@ -63,13 +64,20 @@ return array(
     ),
 
     /**
-     * The following sections still need to be written
+     * TODO: The following sections still need to be written
      */
+
+    //
+    // if enabled=true and allow_origins is empty, it will be turned off
+    // TODO: do we allow subdomains with TLD's, or do we parse them seperately?
+    //   test.php-oop.net is different from php-oop.net, or do we parse just
+    //   php-oop.net and allow it as a whole?
+    //
     'origin_check' => array(
         'origin_check_enabled' => false,
-        'allow_origins' => array(
-            'is->null',             // is->    : makes a direct comparison
-            'has->php-oop.net',     // has->   : makes general comparison (if the origin contains this text)
+        'allowed_origins' => array(
+            'is^null',             // is->    : makes a direct comparison
+            'has^php-oop.net',     // has->   : makes general comparison (if the origin contains this text)
         )
     ),
 
