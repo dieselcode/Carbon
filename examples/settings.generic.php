@@ -7,7 +7,7 @@ return array(
          * 'tcp', 'ssl', 'sslv2', 'sslv3', or 'tls'.  Using ssl or tls will activate the 'ssl' section below
          * 'tls' is recommended for secure connections
          */
-        'scheme'        => 'tls',
+        'scheme'        => 'tcp',
 
         /**
          * Recommended; host IP to bind server to
