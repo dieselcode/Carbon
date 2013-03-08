@@ -342,7 +342,9 @@ class Protocol extends Frame
         $headers = $connection->parseHeaders($data);
         $path    = $headers['GET'];
 
-        // TODO: Do origin checks here
+        /**
+         * Process the origin for validity (if the setting is turned on)
+         */
         if (Settings::get('origins')['origin_check_enabled']) {
             $allowed_origins = Settings::get('origins')['allowed_origins'];
 
@@ -354,6 +356,8 @@ class Protocol extends Frame
                     $connection->log('Origin accepted and valid (' . $origin . ')...');
                 } else {
                     $connection->log('Origin was denied (' . $origin . ')...');
+                    $origin_error = "HTTP/1.1 403 Forbidden\r\n\r\n";
+                    $connection->server->writeWholeBuffer($connection->socket, $origin_error);
                     return false;
                 }
 
@@ -361,7 +365,7 @@ class Protocol extends Frame
 
         }
 
-        $connection->log('Performing handshake');
+        $connection->log('Performing handshake...');
 
         // get the appropriate application
         $connection->path = ltrim($path, '/');
@@ -375,6 +379,8 @@ class Protocol extends Frame
         if ($connection->server->hasRoute($connection->path)) {
             $connection->route = $connection->server->getRoute($connection->path);
         } else {
+            $path_error = "HTTP/1.1 404 Not Found\r\n\r\n";
+            $connection->server->writeWholeBuffer($connection->socket, $path_error);
             $connection->log('Invalid route accessed: "' . $connection->path . '"');
             $connection->onDisconnect();
 
@@ -399,7 +405,9 @@ class Protocol extends Frame
                 return false;
             }
         } else {
-            $connection->log('Incorrect headers or old protocol.  Must use a HyBi compatible client (version 8 or higher)');
+            $version_error = "HTTP/1.1 426 Upgrade Required\r\nSec-WebSocket-Version: " . self::ALLOW_MIN_VERSION . "\r\n\r\n";
+            $connection->server->writeWholeBuffer($connection->socket, $version_error);
+            $connection->log('Incorrect headers or old protocol.  Must use a HyBi compatible client');
             $connection->onDisconnect();
 
             return false;

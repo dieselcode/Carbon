@@ -201,6 +201,12 @@ class Server extends Socket
         }
     }
 
+    public function writeHeader($socket, $code, $body)
+    {
+        $buffer = 'HTTP/1.1 ' . $code . ' ' . $body;
+        $this->writeWholeBuffer($socket, $buffer);
+    }
+
     public function getServerString() {
         return Settings::get('server')['scheme'] . "://" .
                Settings::get('server')['host'] . ":" .
