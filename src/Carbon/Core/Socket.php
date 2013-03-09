@@ -43,10 +43,9 @@ class Socket
         $context = stream_context_create();
 
         // use TLS for the server scheme if we want to be secured.
-        $scheme = (in_array($scheme, array('tls', 'ssl'))) ? 'tls' : 'tcp';
+        $scheme = (in_array($scheme, array('tls', 'ssl', 'sslv2', 'sslv3'))) ? 'tls' : 'tcp';
 
         if ($scheme == 'tls') {
-        //if (in_array($scheme, array('ssl', 'sslv2', 'sslv3', 'tls'))) {
             $context = SSL::getContext();
         }
 
