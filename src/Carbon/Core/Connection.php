@@ -24,7 +24,7 @@ namespace Carbon\Core;
 use \Carbon\Exception\ProtocolException,
     \Carbon\Core\AbstractConnection,
     \Carbon\Core\Protocol,
-    \Carbon\Core\Helpers\DataContainer;
+    \Carbon\Tools\DataContainer;
 
 
 class Connection extends AbstractConnection
