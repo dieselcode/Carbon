@@ -19,7 +19,7 @@
  * License along with this library.
  */
 
-namespace Carbon\Core\Helpers;
+namespace Carbon\Tools;
 
 
 /**
