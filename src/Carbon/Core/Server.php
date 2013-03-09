@@ -25,6 +25,7 @@ use \Carbon\Core\Connection,
     \Carbon\Core\Socket,
     \Carbon\Core\Protocol,
     \Carbon\Core\Settings,
+    \Carbon\Tools\CLI,
     \Carbon\Exception\ServerException,
     \Carbon\Exception\SocketException;
 
@@ -61,6 +62,10 @@ class Server extends Socket
 
         // set up a default timezone
         date_default_timezone_set(Settings::get('options')['default_timezone']);
+
+        // route the second config check to the CLI.  See if we have any args
+        // and if we do, override our 'written' config with the CLI params.
+        CLI::parse();
 
         try {
             parent::__construct(
