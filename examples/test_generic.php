@@ -33,16 +33,13 @@ try {
     $server->route('/echo', function ($route) use ($server) {
 
         $route->on('data', function ($data, $connection) use ($route, $server) {
-
-            // $decoded_data = If the data is determined as JSON, it is decoded here (will be null if none)
-            // $raw_data = whether decoded or not, this is the raw input as passed from the Protocol::decode() method
-            $decoded_data = $data->decoded;
+            $decoded_data = $data->getDecoded();
             if (!empty($decoded_data)) {
                 $message = $decoded_data->message;
                 $decoded_data->message = 'You sent "'.$message.'"! (ECHO1)';
                 $connection->send(json_encode($decoded_data));
             } else {
-                $route->broadcast($data->raw, $connection);
+                $route->broadcast($data->getRaw(), $connection);
             }
 
             /**

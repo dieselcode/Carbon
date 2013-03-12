@@ -33,12 +33,12 @@ class Socket
     protected $first_read = true;
 
 
-    public function __construct($host = '0.0.0.0', $port = 12345, $scheme = 'tcp', $pem_file = null, $pem_pass = null)
+    public function __construct($host = '0.0.0.0', $port = 12345, $scheme = 'tcp')
     {
         $this->createServerSocket($host, $port, $scheme, $pem_file, $pem_pass);
     }
 
-    protected function createServerSocket($host, $port, $scheme = 'tcp', $pem_file = null, $pem_pass = null)
+    protected function createServerSocket($host, $port, $scheme = 'tcp')
     {
         $errno = $errstr = null;
         $context = stream_context_create();

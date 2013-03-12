@@ -39,31 +39,6 @@ return array(
         'socket_select_timeout_usec' => 200000
     ),
 
-    'ssl' => array(
-        'local_cert_path'       => 'carbon.ssl.pem',
-        //'local_cert_path'       => 'cf.pem',
-        'local_cert_passphrase' => 'carbon',
-        //'local_cert_passphrase' => '',
-
-        'cert_settings'         => array(
-            'countryName' => 'US',
-            'stateOrProvinceName' => 'Pennsylvania',
-            'localityName' => 'Reading',
-            'organizationName' => 'Carbon',
-            'organizationalUnitName' => 'Carbon',
-            'commonName' => 'localhost',
-            'emailAddress' => 'none@localhost'
-        )
-    ),
-
-    /**
-     * Not currently implemented
-     */
-    'debug' => array(
-        'debug_verbosity' => 4
-    ),
-
-    //
     'origins' => array(
         'origin_check_enabled' => false,
         'allowed_origins' => array(
@@ -77,6 +52,20 @@ return array(
             'www.websocket.org',
             'websocket.org',
         )
+    ),
+
+    'ssl' => array(
+        'local_cert_path'       => 'carbon.ssl.pem',
+        //'local_cert_path'       => 'cf.pem',
+        'local_cert_passphrase' => 'carbon',
+        //'local_cert_passphrase' => '',
+    ),
+
+    /**
+     * Not currently implemented
+     */
+    'debug' => array(
+        'debug_verbosity' => 4
     ),
 
     'throttle' => array(

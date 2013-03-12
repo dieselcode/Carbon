@@ -171,13 +171,11 @@ class Server extends Socket
                                             }
                                         }
                                     }
-                                } while($bytes > 0);
+                                } while ($bytes > 0);
                             }
                         }
                     }
-
                 }
-
             }
         }
     }

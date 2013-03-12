@@ -27,6 +27,7 @@ class CLI
 {
     private static $short_opts = 'h:p:vH';
     private static $long_opts  = array(
+        'host:', 'port:',
         'allow-origins:', 'debug:', 'buffer-size:',
         'max-buffer', 'with-passphrase',
         'enable-tls:', 'enable-ssl:', 'enable-sslv2:',
@@ -39,11 +40,13 @@ class CLI
             foreach ($opts as $option => $value) {
                 switch ($option) {
                     // host
+                    case 'host':
                     case 'h':
                         Settings::set('server', 'host', $value);
                         break;
 
                     // port
+                    case 'port':
                     case 'p':
                         Settings::set('server', 'port', $value);
                         break;
@@ -120,7 +123,7 @@ options:
 \t--allow-origins=<origins>\tComma-seperated list of origins to accept
 \n\t--enable-tls=<cert>\t\tEnable TLS security with a path to a valid <cert>
 \t--with-passphrase=<pass>\tIf TLS enabled and cert needs a passphrase
-\n\t--version\t\t\tShow version number and exit
+\n\t--version, -v\t\t\tShow version number and exit
 \t--help\t\t\t\tShow this help message and exit");
     }
 
