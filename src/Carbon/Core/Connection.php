@@ -153,21 +153,6 @@ class Connection extends AbstractConnection
         $this->server->writeWholeBuffer($this->socket, $encoded);
     }
 
-    /**
-     * Work if port 843 listen as root
-     */
-    public function serverFlashPolicy()
-    {
-        $policy  = '<?xml version="1.0"?>' . "\n";
-        $policy .= '<!DOCTYPE cross-domain-policy SYSTEM "http://www.macromedia.com/xml/dtds/cross-domain-policy.dtd">' . "\n";
-        $policy .= '<cross-domain-policy>' . "\n";
-        // TODO: Incorporate origin checking here.. add multiple allow-access-from nodes as needed
-        $policy .= '    <allow-access-from domain="*" to-ports="*"/>' . "\n";
-        $policy .= '</cross-domain-policy>' . "\n";
-        $this->server->writeWholeBuffer($this->socket, $policy);
-        $this->onDisconnect();
-    }
-
     /*
      * TODO: Move this to Tools\Logger.php
      */

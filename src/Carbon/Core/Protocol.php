@@ -326,21 +326,9 @@ class Protocol extends Frame
 
     public static function handshake(Connection $connection, $data)
     {
-        $protocol = null;
-        $headers  = array();
-
-        // do something a bit nicer here
-        $lines = preg_split("/\r\n/", $data);
-        if (count($lines) && preg_match('/<policy-file-request.*>/', $lines[0])) {
-            $connection->log('Flash policy file request');
-            $connection->serverFlashPolicy();
-
-            return false;
-        }
-        unset($lines);
-
-        $headers = $connection->parseHeaders($data);
-        $path    = $headers['GET'];
+        $protocol   = null;
+        $headers    = $connection->parseHeaders($data);
+        $path       = $headers['GET'];
 
         /**
          * Process the origin for validity (if the setting is turned on)
