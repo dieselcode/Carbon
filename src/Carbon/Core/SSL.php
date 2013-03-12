@@ -21,6 +21,7 @@
 namespace Carbon\Core;
 
 use Carbon\Core\Settings;
+use Carbon\Exception\SSLException;
 
 class SSL
 {
@@ -40,31 +41,6 @@ class SSL
         return !!self::$enabled;
     }
 
-    protected static function createCert($settings = null)
-    {
-        self::_load();
-
-        $x509 = $pkey = '';
-
-        $configurePath = array(
-            'config' => dirname(dirname(dirname(dirname(__FILE__)))) . '/ssl/openssl.cnf',
-            'private_key_bits' => 2048,
-            'digest_alg' => 'sha512',
-            'private_key_type' => OPENSSL_KEYTYPE_RSA
-        );
-
-        $sslHandle = openssl_pkey_new($configurePath);
-
-        $csrNew = openssl_csr_new(self::$settings['cert_settings'], $sslHandle, $configurePath);
-        $cert = openssl_csr_sign($csrNew, null, $sslHandle, 365, $configurePath, time());
-
-        openssl_x509_export($cert, $x509);
-        openssl_pkey_export($sslHandle, $pkey, self::$settings['local_cert_passphrase'], $configurePath);
-
-        file_put_contents(dirname(self::$settings['local_cert_path']) . '/carbon.ssl.crt', $x509);
-        file_put_contents(self::$settings['local_cert_path'], $x509 . $pkey);
-    }
-
     public static function getContext()
     {
         self::_load();
@@ -72,10 +48,10 @@ class SSL
 
         if (self::hasCert()) {
             if (!self::isDateValid()) {
-                self::createCert();
+                throw new SSLException('SSL certificate is expired.  Please supply a valid SSL cert.');
             }
         } else {
-            self::createCert();
+            throw new SSLException('Invalid SSL certificate supplied.');
         }
 
         stream_context_set_option($context, 'ssl', 'local_cert', self::$settings['local_cert_path']);

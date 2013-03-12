@@ -25,7 +25,7 @@ use Carbon\Core\Settings;
 
 class CLI
 {
-    private static $short_opts = 'h:p:v';
+    private static $short_opts = 'h:p:vH';
     private static $long_opts  = array(
         'allow-origins:', 'debug:', 'buffer-size:',
         'max-buffer', 'with-passphrase',

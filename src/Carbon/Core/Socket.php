@@ -21,6 +21,7 @@
 
 namespace Carbon\Core;
 
+use Carbon\Exception\SSLException;
 use \Carbon\Exception\SocketException,
     \Carbon\Core\SSL;
 
@@ -46,7 +47,11 @@ class Socket
         $scheme = (in_array($scheme, array('tls', 'ssl', 'sslv2', 'sslv3'))) ? 'tls' : 'tcp';
 
         if ($scheme == 'tls') {
-            $context = SSL::getContext();
+            try {
+                $context = SSL::getContext();
+            } catch (SSLException $e) {
+                throw new SocketException('Socket failed to initialize via SSL: ' . $e->getMessage());
+            }
         }
 
         $address = "{$scheme}://{$host}:{$port}";
