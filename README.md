@@ -1,3 +1,5 @@
+![Carbon](http://php-oop.net/~andrew/logos/Carbon-sm.png)
+
 Carbon
 ======
 
